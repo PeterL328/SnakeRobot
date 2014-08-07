@@ -1,28 +1,26 @@
 //--------------------------------------------------------------
 //-- Locomotion of the pith-yaw-12 configuration
 //-- The robot consist of 12 modules in total, 6 are pitching and 6 yawing
-//-- The structure is P - Y - P - Y - P - Y
+//-- The structure is P - Y - P - Y - P - Y ...
 //---------------------------------------------------------------
 //-- There are 4 boards controlling the robot, each one in charge of
-//--  3 modules:
+//--  4 modules:
 //--  Group 1-4:  P  -  Y  -  P  - Y(board 1-4)
 //----------------------------------------------------------------
-//-- Even though this example has been developed for controlling a 12 module snake,
-//-- it is generic. Changing the constant BOARDS and M it can be used for longer
+//-- Changing the constant BOARDS and M it can be used for longer
 //-- snakes
-//-----------------------------------------------------------
-//-- The robot automatically changes the gait after some time
 //--------------------------------------------------------------
 //-- (c) Juan Gonzalez-Gomez (Obijuan), Jul-2013
-//-- Modified by Peter Leng Aug-2014
+//-- Heavily modified by Peter Leng Aug-2014
 //-- GPL license
 //--------------------------------------------------------------
+//-- Library
 #include <Servo.h>
 #include <Oscillator.h>
 
 
 //----------------------------------------------------------------------
-//-- Constants that can be changed by the user
+//-- Constants that can be changed for you needs
 
 //-- Total Number of board
 const int BOARDS = 4;
@@ -61,7 +59,7 @@ const int ph_ini[] =  {0,   0,   0,    0,   180};
 //--  4: Rolling
 
 //-- Total number of modules in the snake
-const int MOD = M * BOARDS;
+const int totalNumMod = M * BOARDS;
 
 //-- Number of elements in the sequence
 int seq_size = sizeof(Av)/sizeof(int);
@@ -72,15 +70,15 @@ Oscillator osc[M];
 
 //-- Parameters of the global snake. They are calculated from the 
 //-- global parameters Av, Ah, phd_v, phd_h and ph_ini
-int snake_A[MOD];   //-- Amplitude
-int snake_ph[MOD];  //-- Phase
-int snake_T[MOD];   //-- Period
+int snake_A[totalNumMod];   //-- Amplitude
+int snake_ph[totalNumMod];  //-- Phase
+int snake_T[totalNumMod];   //-- Period
 
 //-- Get the global snake parameters from the current gait
 void global_snake(int seq)
 {
   //-- Calculate the global snake
-  for (int i = 0; i<MOD; i++) {
+  for (int i = 0; i< totalNumMod; i++) {
     
     //-- Even modules:
     if (i % 2 == 0) {
@@ -112,91 +110,29 @@ void map_snake()
   }
 }
 
-//-- This function returns true when the test button
-//-- is pressed
-bool button_clicked()
-{
-  
-  static int button=1;
-  static int oldbutton=1;
-  
-  //-- Save the previous button state
-  oldbutton=button;
-  
-  // read the button
-  button = digitalRead(BUTTON);
-
-  //-- Detect a change in the button
-  if (button!=oldbutton) {
-    delay(20); //-- for debouncing
-    if (button==PRESSED)
-      return true;
-  } 
-  
-  return false;
-}
-
-static long previousMillis = 0; 
-static long currentMillis;
-  
-//-- This function returns true when the time "time"
-//-- has passed since the last call
-bool timeout(long time)
-{
-  //-- Read current time
-  currentMillis = millis();
- 
-  //-- Check if the timeout has passed
-  if(currentMillis - previousMillis > time) {
-    previousMillis = currentMillis;   
-
-    return true;
-  }
-  
-  return false;
-}
-
-
 
 void setup()
 {
-  //-- Attach the oscillators to the two servos
-  //-- For arduino, you can use the pin number instead of SERVO2
-  osc[0].attach(servoPins[0]);
-  osc[1].attach(servoPins[1]);
-  osc[2].attach(servoPins[2]);
-  osc[4].attach(servoPins[3]);
-  // Test LED. For arduino uno use the pin 13
-  pinMode(LED, OUTPUT);      
-  
-  //-- Test button. For arduino uno use a pin number
-  pinMode(BUTTON, INPUT);
-  
-  //-- Activate the button pull-up resistor
-  digitalWrite(BUTTON, HIGH); 
-  
+  //-- Attach the oscillators to the servos
+  for (int i = 0; i < M; i++){
+    osc[i].attach(servoPins[i]);
+  }
+
   //-- Calculate the snake parameters for the initial gait
   global_snake(0);
   
   //-- Configure the oscillators of the current board
   map_snake();
-  
-  //-- Turn on the led
-  digitalWrite(LED, ON);
-
 }
 
 void loop()
 {
   //-- Refresh the oscillators
-  for (int i=0; i<3; i++)
+  for (int i = 0; i < M; i++)
     osc[i].refresh(); 
     
-  //-- If button clicked... or after sometime... change the gait  
-  if (button_clicked() || timeout(GAIT_TIME)) {
     
-    //-- Reset the timer
-    previousMillis = currentMillis;
+    /* For Changing gaits
     
     //-- Point to the next sequence
     seq = (seq + 1) % seq_size;
@@ -207,7 +143,7 @@ void loop()
     //-- Configure the oscillators of the current board
     map_snake();
     
-  }   
+    */    
 }
 
 
