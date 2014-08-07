@@ -32,7 +32,7 @@ const int M = 4;
 const int board = 1;
 
 //-- Servo pins for different board. Change pins here NEED to be in order
-const int servoPins[M] = [1,2,3,4];
+const int servoPins[] = [1,2,3,4];
 
 
 //-----------------------------------------------------------------------
