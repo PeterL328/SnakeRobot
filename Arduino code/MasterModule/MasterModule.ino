@@ -1,7 +1,7 @@
 //=====================================================================
 // Project: SnakeRobot V1.0
 // Description: Master module of the Snake Robot.
-// This the sends control data from a PS2 controller to the
+// This sends control data from a PS2 controller to the
 // slave modules, 
 // 
 // Compiled with Arduino Version 1.0.5 
@@ -12,7 +12,11 @@
 // =====================================================================
 
 // Libraries
-#include <PS2X_lib>
+#include <PS2X_lib.h>
+
+// Constants
+#define CRAWLMODE 0 
+#define CAMERAMODE 1 // Let half of the robot rise and let the user freely move that part
 
 // Pins
 #define SLAVE_1 10
@@ -29,7 +33,9 @@
 PS2X ps2x;
 
 // Variables
-bool robotIsOn = false;
+static bool robotIsOn = false;
+static byte controlMode;
+
 // ======================================================================
 // Setup
 // ======================================================================
@@ -44,6 +50,10 @@ void setup(){
    
 }
  
+// ======================================================================
+// Loop
+// ======================================================================
+
 void loop(){
    
   //Try to receive information from ps2 controller
@@ -64,6 +74,20 @@ void loop(){
     //If robot is on then do the following
     if (robotIsOn){
       
+      // Camera mode
+      if (ps2x.ButtonPressed(PSB_L1)){
+        if (controlMode != CAMERAMODE){
+          controlMode = CAMERAMODE;
+        }
+        else {
+          controlMode = CRAWLMODE;
+        }
+      }
+      
+      if (ps2x.ButtonPressed(PSB_R1)){
+        // Not yet decided
+      }
+      
       if (ps2x.ButtonPressed(PSB_CIRCLE)){
         
       }
@@ -80,7 +104,7 @@ void loop(){
         
       }
       
-      if (ps2x.ButtonPressed(PSB_PAD_UP){
+      if (ps2x.ButtonPressed(PSB_PAD_UP)){
         
       }
       
@@ -94,6 +118,24 @@ void loop(){
       
       if (ps2x.ButtonPressed(PSB_PAD_LEFT)){
         
+      }
+      
+      // crawlMode
+      if (controlMode == CRAWLMODE){
+        //Send over the analog stick values to the slaves
+        Serial.print("Stick Values:");
+        Serial.print(ps2x.Analog(PSS_LY), DEC); //Left stick, Y axis. Other options: LX, RY, RX  
+        Serial.print(",");
+        Serial.print(ps2x.Analog(PSS_LX), DEC); 
+        Serial.print(",");
+        Serial.print(ps2x.Analog(PSS_RY), DEC); 
+        Serial.print(",");
+        Serial.println(ps2x.Analog(PSS_RX), DEC); 
+      }
+      
+      if (controlMode == CAMERAMODE){
+        // Send some data
+      
       }
     }
     
