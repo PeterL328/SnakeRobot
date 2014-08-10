@@ -29,12 +29,12 @@
 PS2X ps2x;
 
 // Variables
-
+bool robotIsOn = false;
 // ======================================================================
 // Setup
 // ======================================================================
 
- void setup(){
+void setup(){
    int error;
    
    Serial.begin(57600);
@@ -42,4 +42,62 @@ PS2X ps2x;
    error = ps2x.config_gamepad(PS2_CLK, PS2_CMD, PS2_SEL, PS2_DAT);  
    
    
- }
+}
+ 
+void loop(){
+   
+  //Try to receive information from ps2 controller
+  ps2x.read_gamepad();
+  
+  //Verify that the read_gamepad succeeded
+  if ((ps2x.Analog(1) & 0xf0) == 0x70){
+   
+    //If start button is pressed either turn off he robot or turn it on
+    if (ps2x.ButtonPressed(PSB_START)){
+      if (robotIsOn){
+        // TURN ROBOT OFF   
+      }
+      else {
+        robotIsOn = true;
+      }
+    }
+    //If robot is on then do the following
+    if (robotIsOn){
+      
+      if (ps2x.ButtonPressed(PSB_CIRCLE)){
+        
+      }
+      
+      if (ps2x.ButtonPressed(PSB_CROSS)){
+        
+      }
+      
+      if (ps2x.ButtonPressed(PSB_SQUARE)){
+        
+      }
+      
+      if (ps2x.ButtonPressed(PSB_TRIANGLE)){
+        
+      }
+      
+      if (ps2x.ButtonPressed(PSB_PAD_UP){
+        
+      }
+      
+      if (ps2x.ButtonPressed(PSB_PAD_DOWN)){
+        
+      }
+      
+      if (ps2x.ButtonPressed(PSB_PAD_RIGHT)){
+        
+      }
+      
+      if (ps2x.ButtonPressed(PSB_PAD_LEFT)){
+        
+      }
+    }
+    
+    
+  }
+
+}
