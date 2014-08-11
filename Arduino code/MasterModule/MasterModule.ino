@@ -29,6 +29,9 @@
 #define PS2_SEL 3
 #define PS2_DAT 2
  
+#define TOTALBOARDS 4 //Total Number of boards
+#define MPERBOARD 4 //Modules per board
+#define TOTALMODS TOTALBOARDS*MPERBOARD // Total modules in the snake  
 // Objects
 PS2X ps2x;
 
@@ -43,6 +46,7 @@ static byte controlMode;
 void setup(){
    int error;
    
+   wire.begin();
    // Setup gamepad (clock, command, attention, data) pins
    error = ps2x.config_gamepad(PS2_CLK, PS2_CMD, PS2_SEL, PS2_DAT);  
    
@@ -121,7 +125,15 @@ void loop(){
       
       // crawlMode
       if (controlMode == CRAWLMODE){
-        //Send over the analog stick values to the slaves
+        for (int i = 0; i < TOTALBOARDS; i++){
+          wire.beginTransmission(i);
+          wire.write("S");
+          wire.write(ps2x.Analog(PSS_LY));
+          wire.write(ps2x.Analog(PSS_LX));
+          wire.write(ps2x.Analog(PSS_RY));
+          wire.write(ps2x.Analog(PSS_RX));
+          wire.endTransmission();
+        }
         
       }
       
