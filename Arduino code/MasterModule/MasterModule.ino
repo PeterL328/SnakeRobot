@@ -2,7 +2,7 @@
 // Project: SnakeRobot V1.0
 // Description: Master module of the Snake Robot.
 // This sends control data from a PS2 controller to the
-// slave modules, 
+// slave modules via I2C, 
 // 
 // Compiled with Arduino Version 1.0.5 
 // Date: 8/8/2014
@@ -13,7 +13,7 @@
 
 // Libraries
 #include <PS2X_lib.h>
-
+#include <Wire.h>
 // Constants
 #define CRAWLMODE 0 
 #define CAMERAMODE 1 // Let half of the robot rise and let the user freely move that part
@@ -43,7 +43,6 @@ static byte controlMode;
 void setup(){
    int error;
    
-   Serial.begin(57600);
    // Setup gamepad (clock, command, attention, data) pins
    error = ps2x.config_gamepad(PS2_CLK, PS2_CMD, PS2_SEL, PS2_DAT);  
    
@@ -123,14 +122,7 @@ void loop(){
       // crawlMode
       if (controlMode == CRAWLMODE){
         //Send over the analog stick values to the slaves
-        Serial.print("Stick Values:");
-        Serial.print(ps2x.Analog(PSS_LY), DEC); //Left stick, Y axis. Other options: LX, RY, RX  
-        Serial.print(",");
-        Serial.print(ps2x.Analog(PSS_LX), DEC); 
-        Serial.print(",");
-        Serial.print(ps2x.Analog(PSS_RY), DEC); 
-        Serial.print(",");
-        Serial.println(ps2x.Analog(PSS_RX), DEC); 
+        
       }
       
       if (controlMode == CAMERAMODE){
