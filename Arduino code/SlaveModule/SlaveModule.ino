@@ -35,7 +35,7 @@
 //Servo pins for different board. Change pins here NEED oto be in order
 const int servoPins[MPERBOARD] = {1,2,3,4};
 
-// --                   0    1    2     3    4
+// --                   0    1    2     3    4    5
 const int T[] =       {T0,  T1,  T1,   T2,   T2,  T0};
 const int Av[] =      {0,   40, -40,   20,   20,   80};
 const int Ah[] =      {0,   0,   0,    40,   40,   80};
