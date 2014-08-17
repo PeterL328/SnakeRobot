@@ -108,6 +108,7 @@ void map_snake(){
 void receiveEvent(){
   if (wire.available){
     if (wire.read == "S"){
+      // Has to read in this order
       leftY = wire.read;
       leftX = wire.read;
       rightY = wire.read;
