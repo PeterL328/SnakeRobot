@@ -46,10 +46,10 @@ static byte controlMode;
 void setup(){
    int error;
    
+   // Begin the I2C interface
    wire.begin();
    // Setup gamepad (clock, command, attention, data) pins
-   error = ps2x.config_gamepad(PS2_CLK, PS2_CMD, PS2_SEL, PS2_DAT);  
-   
+   error = ps2x.config_gamepad(PS2_CLK, PS2_CMD, PS2_SEL, PS2_DAT);
    
 }
  
@@ -125,8 +125,12 @@ void loop(){
       
       // crawlMode
       if (controlMode == CRAWLMODE){
+        // Send PS2 stick data to all boards
         for (int i = 0; i < TOTALBOARDS; i++){
           wire.beginTransmission(i);
+          // sending "S" so slaves would know what kind of data 
+          // they would get next.
+          // The stick data are in this ORDER
           wire.write("S");
           wire.write(ps2x.Analog(PSS_LY));
           wire.write(ps2x.Analog(PSS_LX));
