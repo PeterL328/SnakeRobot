@@ -114,8 +114,15 @@ void receiveEvent(){
       rightY = wire.read;
       rightX = wire.read;
     }
+    if (wire.read == "I"){
+      for (int i = 0; i < MPERBOARD; i++)
+         osc[i].Play(); 
+    }
+    if (wire.read == "O"){
+      for (int i = 0; i < MPERBOARD; i++)
+         osc[i].Stop(); 
+    }
   }
-
 }
 
 void performChanges(){
