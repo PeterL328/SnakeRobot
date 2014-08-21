@@ -25,14 +25,14 @@
 #define BOARD 1 //Specify which board(Arduino) you are uploading to
 #define TOTALMODS TOTALBOARDS*MPERBOARD // Total modules in the snake  
 
-//Different periods for the oscillations (ms)
+// Different periods for the oscillations (ms)
 #define T0  8000
 #define T1  1400
 #define T2  3000
 
 // ======================================================================
 
-//Servo pins for different board. Change pins here NEED oto be in order
+// Servo pins for different modules. The pins here needs to be in order.
 const int servoPins[MPERBOARD] = {1,2,3,4};
 
 // --                   0    1    2     3    4    5
@@ -44,7 +44,7 @@ const int phd_h[] =   {0,   0,   0,    120,  60,   0};
 const int phd_vh[] =  {0,   0,   0,    0,    90,   90};
 const int ph_ini[] =  {0,   0,   0,    0,    0,    180};
 
-//Description of the locomotion gaits
+// Description of the locomotion gaits
 //--  0: Robot is turned off
 //--  1: Linear progression (forward)
 //--  2: Linear progression (backwards)
@@ -52,51 +52,51 @@ const int ph_ini[] =  {0,   0,   0,    0,    0,    180};
 //--  4: Rotating
 //--  5: Rolling
 
-//Number of elements in the sequence
+// Number of elements in the sequence
 int seq_size = sizeof(Av)/sizeof(int);
 int seq = 0;  //Sequence counter
 
-//Declare the oscillators controlled by the current board
+// Declare the oscillators controlled by the current board
 Oscillator osc[MPERBOARD];
 
-//Parameters of the global snake. They are calculated from the 
-//global parameters Av, Ah, phd_v, phd_h and ph_ini
+// Parameters of the global snake. They are calculated from the 
+// global parameters Av, Ah, phd_v, phd_h and ph_ini
 int snake_A[TOTALMODS];   //-- Amplitude
 int snake_ph[TOTALMODS];  //-- Phase
 int snake_T[TOTALMODS];   //-- Period
 
-//PS2 Controller stick positions
+// PS2 Controller stick positions
 static byte leftY;
 static byte leftX;
 static byte rightY;
 static byte rightX;
 
-//Get the global snake parameters from the current gait
+// Get the global snake parameters from the current gait
 void global_snake(int seq){
-  //-- Calculate the global snake
+  // Calculate the global snake
   for (int i = 0; i< TOTALMODS; i++) {
     
-    //-- Even modules:
+    // Even modules:
     if (i % 2 == 0) {
       snake_A[i] = Av[seq];
       
       snake_ph[i] = ph_ini[seq] + (i/2) * phd_v[seq];
     }
-    //-- Odd modules
+    // Odd modules
     else {
       snake_A[i] = Ah[seq];
       snake_ph[i] = ph_ini[seq] + phd_vh[seq] + (i-1)/2 * phd_h[seq];
     }
     
-    //-- The period is the same for all the modules
+    // The period is the same for all the modules
     snake_T[i] = T[seq];
     
   }
 }
 
-//-- Map the snake parameters into the board oscillators
+// Map the snake parameters into the board oscillators
 void map_snake(){
-  //-- Map the snake parameters into the oscillators of the board
+  // Map the snake parameters into the oscillators of the board
   for (int i = 0; i < MPERBOARD; i++) {
     osc[i].SetO(0);                           //-- Offset is always 0
     osc[i].SetT(snake_T[ (BOARD-1)*MPERBOARD + i ]);  //-- Map the period
@@ -140,15 +140,15 @@ void performChanges(){
 void setup(){
   // Begin the I2C interface
   wire.begin(BOARD);
-  //-- Attach the oscillators to the servos
+  // Attach the oscillators to the servos
   for (int i = 0; i < MPERBOARD; i++){
     osc[i].attach(servoPins[i]);
   }
 
-  //-- Calculate the snake parameters for the initial gait
+  // Calculate the snake parameters for the initial gait
   global_snake(0);
   
-  //-- Configure the oscillators of the current board
+  // Configure the oscillators of the current board
   map_snake();
 }
 
@@ -157,12 +157,12 @@ void setup(){
 // ======================================================================
 
 void loop(){
-  //-- Refresh the oscillators
+  // Refresh the oscillators
   for (int i = 0; i < MPERBOARD; i++)
     osc[i].refresh(); 
  
   
-  //Received data from master 
+  // Received data from master 
   wire.onReceive(receiveEvent);
   
   performChanges();
