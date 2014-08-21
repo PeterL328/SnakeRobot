@@ -68,9 +68,19 @@ void loop(){
     //If start button is pressed either turn off he robot or turn it on
     if (ps2x.ButtonPressed(PSB_START)){
       if (robotIsOn){
-        // TURN ROBOT OFF   
+        for (int i = 0; i < TOTALBOARDS; i++){
+          wire.beginTransmission(I);
+          wire.write("O");
+          wire.endTransmission();
+        }
+        robotIsOn = false;
       }
       else {
+        for (int i = 0; i < TOTALBOARDS; i++){
+          wire.beginTransmission(I);
+          wire.write("I");
+          wire.endTransmission();
+        }
         robotIsOn = true;
       }
     }
