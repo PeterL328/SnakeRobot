@@ -119,11 +119,14 @@ void receiveEvent(){
 }
 
 void performChanges(){
-  if (leftY == 0) {
+  // Stick value    0-255
+  // The stick is neutral at 127
+  if (leftY == 127) {
     global_snake(0);
     map_snake();
   }
-  else if (leftY > 0){
+  // The stick value is negative when moved up
+  else if (leftY < 0){
     global_snake(1);
     map_snake();
   }
@@ -162,7 +165,7 @@ void loop(){
     osc[i].refresh(); 
  
   
-  // Received data from master 
+  // Received data from master so go to this function
   wire.onReceive(receiveEvent);
   
   performChanges();
