@@ -32,7 +32,11 @@
 
 // ======================================================================
 
+<<<<<<< HEAD
 // Servo pins for different board. Change pins here NEED oto be in order
+=======
+// Servo pins for different modules. The pins here needs to be in order.
+>>>>>>> 66f54560882d4fc66e5921f979b0eb74fc0bd751
 const int servoPins[MPERBOARD] = {1,2,3,4};
 
 // --                   0    1    2     3    4    5
@@ -56,7 +60,7 @@ const int ph_ini[] =  {0,   0,   0,    0,    0,    180};
 int seq_size = sizeof(Av)/sizeof(int);
 int seq = 0;  //Sequence counter
 
-//Declare the oscillators controlled by the current board
+// Declare the oscillators controlled by the current board
 Oscillator osc[MPERBOARD];
 
 // Parameters of the global snake. They are calculated from the 
@@ -114,16 +118,26 @@ void receiveEvent(){
       rightY = wire.read;
       rightX = wire.read;
     }
+    if (wire.read == "I"){
+      for (int i = 0; i < MPERBOARD; i++)
+         osc[i].Play(); 
+    }
+    if (wire.read == "O"){
+      for (int i = 0; i < MPERBOARD; i++)
+         osc[i].Stop(); 
+    }
   }
-
 }
 
 void performChanges(){
-  if (leftY == 0) {
+  // Stick value    0-255
+  // The stick is neutral at 127
+  if (leftY == 127) {
     global_snake(0);
     map_snake();
   }
-  else if (leftY > 0){
+  // The stick value is negative when moved up
+  else if (leftY < 0){
     global_snake(1);
     map_snake();
   }
@@ -162,7 +176,11 @@ void loop(){
     osc[i].refresh(); 
  
   
+<<<<<<< HEAD
   // Received data from master 
+=======
+  // Received data from master so go to this function
+>>>>>>> 66f54560882d4fc66e5921f979b0eb74fc0bd751
   wire.onReceive(receiveEvent);
   
   performChanges();
