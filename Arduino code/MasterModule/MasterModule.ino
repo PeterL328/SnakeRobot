@@ -32,7 +32,7 @@ PS2X ps2x;
 
 // Variables
 static bool robotIsOn = false;
-static byte controlMode;
+static byte controlMode = CRAWLMODE;
 
 // ======================================================================
 // Setup
@@ -63,7 +63,7 @@ void loop(){
     //If start button is pressed either turn off he robot or turn it on
     if (ps2x.ButtonPressed(PSB_START)){
       if (robotIsOn){
-        for (int i = 0; i < TOTALBOARDS; i++){
+        for (int i = 1; i <= TOTALBOARDS; i++){
           Wire.beginTransmission(i);
           Wire.write('O');
           Wire.endTransmission();
@@ -71,7 +71,7 @@ void loop(){
         robotIsOn = false;
       }
       else {
-        for (int i = 0; i < TOTALBOARDS; i++){
+        for (int i = 1; i <= TOTALBOARDS; i++){
           Wire.beginTransmission(i);
           Wire.write('I');
           Wire.endTransmission();
@@ -131,7 +131,7 @@ void loop(){
       // crawlMode
       if (controlMode == CRAWLMODE){
         // Send PS2 stick data to all boards
-        for (int i = 0; i < TOTALBOARDS; i++){
+        for (int i = 1; i <= TOTALBOARDS; i++){
           Wire.beginTransmission(i);
           // sending "S" so slaves would know what kind of data 
           // they would get next.

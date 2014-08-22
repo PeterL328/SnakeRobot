@@ -107,7 +107,7 @@ void map_snake(){
 }
 
 void receiveEvent(int numByte){
-  if (Wire.available() == 1){
+  while(Wire.available()){
     char c = Wire.read();
     
     if (c == 'S'){
