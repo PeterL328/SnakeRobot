@@ -30,13 +30,12 @@
 #define T1  1400
 #define T2  3000
 
+
+// Number of bytes received from master in receiveEvent function
+#define NUMBYTE 1
 // ======================================================================
 
-<<<<<<< HEAD
-// Servo pins for different board. Change pins here NEED oto be in order
-=======
 // Servo pins for different modules. The pins here needs to be in order.
->>>>>>> 66f54560882d4fc66e5921f979b0eb74fc0bd751
 const int servoPins[MPERBOARD] = {1,2,3,4};
 
 // --                   0    1    2     3    4    5
@@ -109,22 +108,31 @@ void map_snake(){
   }
 }
 
-void receiveEvent(){
-  if (wire.available){
-    if (wire.read == "S"){
+void receiveEvent(int numByte){
+  if (Wire.available() == 1){
+    char c = Wire.read();
+    
+    if (c == 'S'){
       // Has to read in this order
-      leftY = wire.read;
-      leftX = wire.read;
-      rightY = wire.read;
-      rightX = wire.read;
+      
+      leftY = Wire.read();
+      leftX = Wire.read();
+      rightY = Wire.read();
+      rightX = Wire.read();
     }
-    if (wire.read == "I"){
-      for (int i = 0; i < MPERBOARD; i++)
+    else if (c == 'I'){
+      for (int i = 0; i < MPERBOARD; i++){
+         Serial.println("Starting");
          osc[i].Play(); 
+      }
     }
-    if (wire.read == "O"){
-      for (int i = 0; i < MPERBOARD; i++)
+    else if (c == 'O'){
+      for (int i = 0; i < MPERBOARD; i++){
+         Serial.println("Stoping");
          osc[i].Stop(); 
+      }
+    }
+    else{
     }
   }
 }
@@ -147,13 +155,26 @@ void performChanges(){
   }
 }
 
+void debug(){
+  Serial.println(leftY);
+  Serial.print("#");
+  Serial.print(leftX);
+  Serial.print("#");
+  Serial.print(rightY);
+  Serial.print("#");
+  Serial.print(rightX);
+  Serial.print("#");
+}
+
 // ======================================================================
 // Setup
 // ======================================================================
 
 void setup(){
   // Begin the I2C interface
-  wire.begin(BOARD);
+  Wire.begin(BOARD);
+  // For debugging
+  Serial.begin(9600);
   // Attach the oscillators to the servos
   for (int i = 0; i < MPERBOARD; i++){
     osc[i].attach(servoPins[i]);
@@ -176,14 +197,11 @@ void loop(){
     osc[i].refresh(); 
  
   
-<<<<<<< HEAD
-  // Received data from master 
-=======
   // Received data from master so go to this function
->>>>>>> 66f54560882d4fc66e5921f979b0eb74fc0bd751
-  wire.onReceive(receiveEvent);
+  Wire.onReceive(receiveEvent);
   
-  performChanges();
+  //performChanges();
+  
     
 }
 

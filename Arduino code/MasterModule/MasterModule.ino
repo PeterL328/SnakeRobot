@@ -47,7 +47,7 @@ void setup(){
    int error;
    
    // Begin the I2C interface
-   wire.begin();
+   Wire.begin();
    // Setup gamepad (clock, command, attention, data) pins
    error = ps2x.config_gamepad(PS2_CLK, PS2_CMD, PS2_SEL, PS2_DAT);
    
@@ -69,17 +69,17 @@ void loop(){
     if (ps2x.ButtonPressed(PSB_START)){
       if (robotIsOn){
         for (int i = 0; i < TOTALBOARDS; i++){
-          wire.beginTransmission(I);
-          wire.write("O");
-          wire.endTransmission();
+          Wire.beginTransmission(i);
+          Wire.write('O');
+          Wire.endTransmission();
         }
         robotIsOn = false;
       }
       else {
         for (int i = 0; i < TOTALBOARDS; i++){
-          wire.beginTransmission(I);
-          wire.write("I");
-          wire.endTransmission();
+          Wire.beginTransmission(i);
+          Wire.write('I');
+          Wire.endTransmission();
         }
         robotIsOn = true;
       }
@@ -137,16 +137,16 @@ void loop(){
       if (controlMode == CRAWLMODE){
         // Send PS2 stick data to all boards
         for (int i = 0; i < TOTALBOARDS; i++){
-          wire.beginTransmission(i);
+          Wire.beginTransmission(i);
           // sending "S" so slaves would know what kind of data 
           // they would get next.
           // The stick data are in this ORDER
-          wire.write("S");
-          wire.write(ps2x.Analog(PSS_LY));
-          wire.write(ps2x.Analog(PSS_LX));
-          wire.write(ps2x.Analog(PSS_RY));
-          wire.write(ps2x.Analog(PSS_RX));
-          wire.endTransmission();
+          Wire.write('S');
+          Wire.write(ps2x.Analog(PSS_LY));
+          Wire.write(ps2x.Analog(PSS_LX));
+          Wire.write(ps2x.Analog(PSS_RY));
+          Wire.write(ps2x.Analog(PSS_RX));
+          Wire.endTransmission();
         }
         
       }
