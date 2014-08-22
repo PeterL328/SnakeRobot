@@ -31,8 +31,6 @@
 #define T2  3000
 
 
-// Number of bytes received from master in receiveEvent function
-#define NUMBYTE 1
 // ======================================================================
 
 // Servo pins for different modules. The pins here needs to be in order.
@@ -155,6 +153,7 @@ void performChanges(){
   }
 }
 
+/* Debug: Printing out stick values
 void debug(){
   Serial.println(leftY);
   Serial.print("#");
@@ -165,7 +164,7 @@ void debug(){
   Serial.print(rightX);
   Serial.print("#");
 }
-
+*/
 // ======================================================================
 // Setup
 // ======================================================================
@@ -173,8 +172,10 @@ void debug(){
 void setup(){
   // Begin the I2C interface
   Wire.begin(BOARD);
+  
   // For debugging
-  Serial.begin(9600);
+  // Serial.begin(9600);
+  
   // Attach the oscillators to the servos
   for (int i = 0; i < MPERBOARD; i++){
     osc[i].attach(servoPins[i]);
@@ -200,9 +201,10 @@ void loop(){
   // Received data from master so go to this function
   Wire.onReceive(receiveEvent);
   
-  //performChanges();
+  performChanges();
   
-    
+  // debug();
+  
 }
 
 

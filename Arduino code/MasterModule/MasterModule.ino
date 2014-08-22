@@ -18,12 +18,7 @@
 #define CRAWLMODE 0 
 #define CAMERAMODE 1 // Let half of the robot rise and let the user freely move that part
 
-// Pins
-#define SLAVE_1 10
-#define SLAVE_2 11
-#define SlAVE_3 12
-#define SlAVE_4 13
-
+// Pins for the PS2 controller
 #define PS2_CLK 5
 #define PS2_CMD 4
 #define PS2_SEL 3
