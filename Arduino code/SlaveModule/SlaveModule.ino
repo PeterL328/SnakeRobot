@@ -67,10 +67,11 @@ int snake_ph[TOTALMODS];  //-- Phase
 int snake_T[TOTALMODS];   //-- Period
 
 // PS2 Controller stick positions
-static byte leftY;
-static byte leftX;
-static byte rightY;
-static byte rightX;
+// Initialize at neutral positions
+static byte leftY = 127;
+static byte leftX = 128;
+static byte rightY = 127;
+static byte rightX = 128;
 
 // Get the global snake parameters from the current gait
 void global_snake(int seq){
@@ -112,7 +113,6 @@ void receiveEvent(int numByte){
     
     if (c == 'S'){
       // Has to read in this order
-      
       leftY = Wire.read();
       leftX = Wire.read();
       rightY = Wire.read();
