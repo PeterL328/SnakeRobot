@@ -5,6 +5,8 @@
 //-- (c) Juan Gonzalez-Gomez (Obijuan), Dec 2011
 //-- GPL license
 //--------------------------------------------------------------
+// 8/24/2014 Modified by Peter Leng
+// added a input for Oscillator::refresh(bool rev)
 #if defined(ARDUINO) && ARDUINO >= 100
   #include "Arduino.h"
 #else
@@ -79,9 +81,9 @@ void Oscillator::SetT(unsigned int T)
 /* in order to maintain the oscillations. It calculates            */
 /* if another sample should be taken and position the servo is so  */
 /*******************************************************************/
-void Oscillator::refresh()
+void Oscillator::refresh(bool rev)
 {
-  
+  _rev = rev;
   //-- Only When TS milliseconds have passed, the new sample is obtained
   if (next_sample()) {
   

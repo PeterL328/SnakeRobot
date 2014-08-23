@@ -30,7 +30,7 @@ class Oscillator
     void Stop() {_stop=true;};
     void Play() {_stop=false;};
     void Reset() {_phase=0;};
-    void refresh(bool rev =false);
+    void refresh();
     
   private:
     bool next_sample();  
