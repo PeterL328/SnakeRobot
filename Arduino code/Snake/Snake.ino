@@ -37,7 +37,7 @@
 // Servo pins
 const int servoPins[MPERBOARD] = {1,2,3,4,5,6,7,8,9,10,12,13};
 
-//-- Different periods for the oscillations
+// Different periods for the oscillations
 int T0 = 4000;
 int T1 = 1000;
 
