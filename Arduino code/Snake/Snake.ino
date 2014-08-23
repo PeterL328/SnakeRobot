@@ -145,7 +145,7 @@ void performChanges(){
   Ah[1] = map(abs(leftX),0,100,0,30); 
 }
 
-// This refreshed the servos 
+// This refreshes the servos 
 void refresh(){
   // leftY is -1 because that's it's neutral position
   if(leftY == -1 && leftX == 0){
@@ -234,23 +234,19 @@ void loop(){
     //If start button is pressed either turn off he robot or turn it on
     if (ps2x.ButtonPressed(PSB_START)){
       if (robotIsOn){
-        for (int i = 1; i <= TOTALBOARDS; i++){
           for (int i = 0; i < MPERBOARD; i++){
-          //Serial.println("Stoping");
-          osc[i].Stop();
-         delay(50); 
-      }
-        }
+             //Serial.println("Stoping");
+             osc[i].Stop();
+             delay(50); 
+          }
         robotIsOn = false;
       }
       else {
-        for (int i = 1; i <= TOTALBOARDS; i++){
           for (int i = 0; i < MPERBOARD; i++){
-          //Serial.println("Starting");
-          osc[i].Play(); 
-          delay(50);
-      }
-        }
+             //Serial.println("Starting");
+             osc[i].Play(); 
+             delay(50);
+          }
         robotIsOn = true;
       }
     }
