@@ -3,7 +3,7 @@ Description
 
 This is a snake-like module robot that uses a PS2 remote to control the robot's motion and uses a android phone to perform higher computation such as computer vision and machine learning. The snake robot can be as long as you want.
 
-This robot uses the arduino board, preferably the arduino pro mini for it's small size. This robot can be controlled by just 1 arduino board, however if you want a longer snake robot you can use multiply arduino boards. You can do this by  changing the settings in the code.
+This robot uses the arduino board, preferably the arduino pro mini for it's small size. This robot can be controlled by just one arduino board, however if you want a longer snake robot you can use multiply arduino boards. You can do this by  changing the settings in the code.
 
 You can find the app for android phone in the "Robot Controller" repository.
 
