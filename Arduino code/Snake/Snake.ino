@@ -208,6 +208,7 @@ void setup(){
   
   // Setup gamepad (clock, command, attention, data) pins
    error = ps2x.config_gamepad(PS2_CLK, PS2_CMD, PS2_SEL, PS2_DAT);
+   delay(300);
   // Attach the oscillators to the servos
   for (int i = 0; i < MPERBOARD; i++){
     osc[i].attach(servoPins[i]);
