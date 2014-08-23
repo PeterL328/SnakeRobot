@@ -1,9 +1,7 @@
 //=====================================================================
 // Project: SnakeRobot V1.0
 // Description: Master module of the Snake Robot.
-// This sends control data from a PS2 controller to the
-// slave modules via I2C, 
-// 
+//
 // Compiled with Arduino Version 1.0.5 
 // Date: 8/8/2014
 //
