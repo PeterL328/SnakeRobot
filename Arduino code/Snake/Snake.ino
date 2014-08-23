@@ -1,6 +1,6 @@
 //=====================================================================
 // Project: SnakeRobot V1.0
-// Description: Master module of the Snake Robot.
+// Description: Code for the Snake Robot.
 //
 // Compiled with Arduino Version 1.0.5 
 // Date: 8/8/2014
