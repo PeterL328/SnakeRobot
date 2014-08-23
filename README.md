@@ -3,8 +3,7 @@ Description
 
 This is a snake-like module robot that uses a PS2 remote to control the robot's motion and uses a android phone to perform higher computation such as computer vision and machine learning. The snake robot can be as long as you want.
 
-
-This robot is design in a master-slave fashion, because we had trouble trying to talk to individual servo in a daisy chain fashion. The master module and the slave modules are arduino boards in this case we use the arduino pro mini for it's small size. The PS2 controller data is send to the master module.The master module is located in the front/head location of the snake robot that communicates to the slave modules. The master modules communicates with the slaves and sensors via the I2C interface. Each slave module performs calculations for the gait requested by the master module. 
+This robot uses the arduino board, preferably the arduino pro mini for it's small size. This robot can be controlled by just one arduino board, however if you want a longer snake robot you can use multiply arduino boards. You can do this by  changing the settings in the code.
 
 You can find the app for android phone in the "Robot Controller" repository.
 

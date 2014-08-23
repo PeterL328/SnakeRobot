@@ -1,9 +1,7 @@
 //=====================================================================
 // Project: SnakeRobot V1.0
 // Description: Master module of the Snake Robot.
-// This sends control data from a PS2 controller to the
-// slave modules via I2C, 
-// 
+//
 // Compiled with Arduino Version 1.0.5 
 // Date: 8/8/2014
 //
@@ -39,7 +37,7 @@
 // Servo pins
 const int servoPins[MPERBOARD] = {1,2,3,4,5,6,7,8,9,10,12,13};
 
-//-- Different periods for the oscillations
+// Different periods for the oscillations
 int T0 = 4000;
 int T1 = 1000;
 
