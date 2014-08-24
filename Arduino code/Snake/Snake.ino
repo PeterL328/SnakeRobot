@@ -31,7 +31,7 @@
 #define MAXSPEED 750
 #define MINSPEED 1600
 
-// Settings for Ah
+// Settings for Ah (horizontal amplitude)
 #define MAXAH 30
 #define MINAH 0
 
