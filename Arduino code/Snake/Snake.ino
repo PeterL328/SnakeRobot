@@ -15,10 +15,7 @@
 #include <PS2X_lib.h>
 
 // Board info 
-#define TOTALBOARDS 1 //Total Number of boards
-#define MPERBOARD 12 //Modules per board
-#define BOARD 1 //Specify which board(Arduino) you are uploading to
-#define TOTALMODS TOTALBOARDS*MPERBOARD // Total modules in the snake
+#define TOTALSERVO 12
 
 // Pins for the PS2 controller
 #define PS2_CLK 14
@@ -31,15 +28,24 @@
 #define CAMERAMODE 1 // Let half of the robot rise and let the user freely move that part
 
 // Speeds (in period)
-#define MAXSPEED 700
+#define MAXSPEED 750
 #define MINSPEED 1600
 
-// Servo pins
-const int servoPins[MPERBOARD] = {1,2,3,4,5,6,7,8,9,10,12,13};
+// Settings for Ah
+#define MAXAH 30
+#define MINAH 0
+
+// Controller delay time(ms)
+#define CONTROLLERDELAY 300
+#define BUTTONDELAY 100
+#define CRAWLDELAY 50
+
+// Servo pins (From front to end)
+const int servoPins[TOTALSERVO] = {1,2,3,4,5,6,7,8,9,10,12,13};
 
 // Different periods for the oscillations
-int T0 = 4000;
-int T1 = 1000;
+#define T0  4000
+#define T1  1000
 
 // Gait settings  0    1
 int T[] =        {T0,  T1 };
@@ -48,26 +54,16 @@ int Ah[] =       {0,   0  };
 int phd_v[] =    {0,   90 };
 int phd_h[] =    {0,   90 };
 int phd_vh[] =   {0,   0  };
-int ph_ini[] =   {0,   0  };
+int phd_ini[] =  {0,   0  };
 
 // Description of the locomotion gaits
 // 0: Robot is turned off
 // 1: Be use for linear progression and side moving
 // Others will be added
 
-// Number of elements in the sequence
-int seq_size = sizeof(Av)/sizeof(int);
-int seq = 0;  //Sequence counter
-
-// Parameters of the global snake. They are calculated from the 
-// global parameters Av, Ah, phd_v, phd_h and ph_ini
-int snake_A[TOTALMODS];   // Amplitude
-int snake_ph[TOTALMODS];  // Phase
-int snake_T[TOTALMODS];   // Period
-
 // Declaring objects
 PS2X ps2x;
-Oscillator osc[MPERBOARD];
+Oscillator osc[TOTALSERVO];
 
 // Variables 
 static bool robotIsOn = false;
@@ -75,48 +71,36 @@ static byte controlMode = CRAWLMODE;
 static int crawlSpeed = 0;
 
 // PS2 Controller stick positions
-static byte leftY;
-static byte leftX;
-static byte rightY;
-static byte rightX;
+static int leftY;
+static int leftX;
+static int rightY;
+static int rightX;
 
 // ======================================================================
 // Functions
 // ======================================================================
 
 // Get the global snake parameters from the current gait
-void globalSnake(int seq){
+void mapSnake(int seq){
   // Calculate the global snake
-  for (int i = 0; i< TOTALMODS; i++) {
+  for (int i = 0;i< TOTALSERVO;i++){
     
-    // Even modules:
-    if (i % 2 == 0) {
-      snake_A[i] = Av[seq];
-      
-      snake_ph[i] = ph_ini[seq] + (i/2) * phd_v[seq];
+    osc[i].SetO(0);
+    
+    // Even modules
+    if (i%2 == 0){
+      osc[i].SetA(Av[seq]);
+      osc[i].SetPh(DEG2RAD(phd_ini[seq]) + (i/2) * phd_v[seq]);
     }
     // Odd modules
-    else {
-      snake_A[i] = Ah[seq];
-      snake_ph[i] = ph_ini[seq] + phd_vh[seq] + (i-1)/2 * phd_h[seq];
+    else{
+      osc[i].SetA(Ah[seq]);
+      osc[i].SetPh(DEG2RAD(phd_ini[seq]) + phd_vh[seq] + (i-1)/2 * phd_h[seq]);
     }
-    
-    // The period is the same for all the modules
-    snake_T[i] = T[seq];
-    
+    osc[i].SetT(T[seq]);
   }
 }
 
-// Map the snake parameters into the board oscillators
-void mapSnake(){
-  // Map the snake parameters into the oscillators of the board
-  for (int i = 0; i < MPERBOARD; i++) {
-    osc[i].SetO(0);                           //-- Offset is always 0
-    osc[i].SetT(snake_T[ (BOARD-1)*MPERBOARD + i ]);  //-- Map the period
-    osc[i].SetA(snake_A[ (BOARD-1)*MPERBOARD + i ]);   //-- Map the amplitude
-    osc[i].SetPh(DEG2RAD( snake_ph[(BOARD-1)*MPERBOARD + i ] )); //-- Map the phase
-  }
-}
 // Read PS2 controller values
 void readValues(){
   
@@ -135,14 +119,14 @@ void performChanges(){
   // Calculate the speed of the robot by using the position of the stick 
   // and maping it to periods
   crawlSpeed = map(int(sqrt((leftY*leftY)+(leftX*leftX))),0,100,MINSPEED,MAXSPEED);
-  T1 = crawlSpeed;
-  // Change the horizontal amplitude of some servos so we can 
+  T[1]= crawlSpeed;
+  // Change the horizontal amplitude of all  hornizonal servos so we can 
   // achieve side moving 
   // Here we use the absolute value of the leftX value and map
   // it from 0 to 30. 0 making robot crawl completely straight and 
   // 30 making robot moving to the side completely.
   // anythng in between will have combined effects.
-  Ah[1] = map(abs(leftX),0,100,0,30); 
+  Ah[1] = map(abs(leftX),0,100,MINAH,MAXAH); 
 }
 
 // This refreshes the servos 
@@ -150,20 +134,16 @@ void refresh(){
   // leftY is -1 because that's it's neutral position
   if(leftY == -1 && leftX == 0){
    // Do nothing because in neutral position
+   mapSnake(0);
+   for (int i = 0; i < TOTALSERVO; i++){
+      osc[i].refresh();
+   }
   }
   
   // Here the left stick is in the northwest location  
-  // so we don't need to reverse the servos
+  // so we only need to reverse the odd servos
   if (leftY >= 0 && leftX > 0){
-    for (int i = 0; i < MPERBOARD; i++){
-      osc[i].refresh();
-    }
-  }
-  
-  // Here the left stick is in the northeast location 
-  // so we only need to reverse the odd servos 
-  if (leftY >= 0 && leftX < 0){
-    for (int i = 0;i < MPERBOARD; i++){
+    for (int i = 0; i < TOTALSERVO; i++){
       if (i%2 == 0){
         osc[i].refresh();
       }
@@ -172,17 +152,25 @@ void refresh(){
       }
     }
   }
+  
+  // Here the left stick is in the northeast location 
+  // so we don't need to reverse the servos
+  if (leftY >= 0 && leftX < 0){
+    for (int i = 0;i < TOTALSERVO; i++){
+      osc[i].refresh(); 
+    }
+  }
   // Here the left stick is in the southeast location 
   // so we need to reverse all the servos 
-  if (leftY < 0 && leftX < 0){
-    for (int i = 0; i < MPERBOARD; i++){
+  if (leftY <= 0 && leftX < 0){
+    for (int i = 0; i < TOTALSERVO; i++){
       osc[i].refresh(true); 
     }
   }
   // Here the left stick is in the southwest location 
   // so we only need to reverse the even servos 
   if (leftY < 0 && leftX > 0){
-    for (int i = 0;i < MPERBOARD; i++){
+    for (int i = 0;i < TOTALSERVO; i++){
       if (i%2 == 0){
         osc[i].refresh(true);
       }
@@ -205,18 +193,20 @@ void setup(){
   int error;
   
   // Setup gamepad (clock, command, attention, data) pins
-   error = ps2x.config_gamepad(PS2_CLK, PS2_CMD, PS2_SEL, PS2_DAT);
-   delay(300);
+  error = ps2x.config_gamepad(PS2_CLK, PS2_CMD, PS2_SEL, PS2_DAT);
+  // Give the controller some time
+  delay(CONTROLLERDELAY);
   // Attach the oscillators to the servos
-  for (int i = 0; i < MPERBOARD; i++){
-    osc[i].attach(servoPins[i]);
+  for (int i = 0; i < TOTALSERVO; i++){
+      osc[i].attach(servoPins[i]);
   }
 
-  // Calculate the snake parameters for the initial gait
-  globalSnake(0);
+  // Snake be neutral
+  mapSnake(0);
   
-  // Configure the oscillators of the current board
-  mapSnake();
+  for (int i = 0; i < TOTALSERVO; i++){
+      osc[i].refresh();
+  }
 }
 
 // ======================================================================
@@ -234,18 +224,18 @@ void loop(){
     //If start button is pressed either turn off he robot or turn it on
     if (ps2x.ButtonPressed(PSB_START)){
       if (robotIsOn){
-          for (int i = 0; i < MPERBOARD; i++){
+          for (int i = 0; i < TOTALSERVO; i++){
              //Serial.println("Stoping");
              osc[i].Stop();
-             delay(50); 
+             delay(BUTTONDELAY); 
           }
         robotIsOn = false;
       }
       else {
-          for (int i = 0; i < MPERBOARD; i++){
+          for (int i = 0; i < TOTALSERVO; i++){
              //Serial.println("Starting");
              osc[i].Play(); 
-             delay(50);
+             delay(BUTTONDELAY);
           }
         robotIsOn = true;
       }
@@ -261,6 +251,7 @@ void loop(){
         else {
           controlMode = CRAWLMODE;
         }
+        delay(BUTTONDELAY);
       }
       
       if (ps2x.ButtonPressed(PSB_R1)){
@@ -302,10 +293,9 @@ void loop(){
       // crawlMode
       if (controlMode == CRAWLMODE){
         performChanges();
-        globalSnake(1);
-        mapSnake();
+        mapSnake(1);
         refresh();
-        delay(50);
+        delay(CRAWLDELAY);
       }
       
       if (controlMode == CAMERAMODE){
