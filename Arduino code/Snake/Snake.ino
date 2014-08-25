@@ -227,17 +227,17 @@ void loop(){
           for (int i = 0; i < TOTALSERVO; i++){
              //Serial.println("Stoping");
              osc[i].Stop();
-             delay(BUTTONDELAY); 
           }
-        robotIsOn = false;
+         delay(BUTTONDELAY); 
+         robotIsOn = false;
       }
       else {
           for (int i = 0; i < TOTALSERVO; i++){
              //Serial.println("Starting");
              osc[i].Play(); 
-             delay(BUTTONDELAY);
           }
-        robotIsOn = true;
+         delay(BUTTONDELAY);
+         robotIsOn = true;
       }
     }
     //If robot is on then do the following
