@@ -5,7 +5,7 @@
 // Compiled with Arduino Version 1.0.5 
 // Date: 8/8/2014
 //
-// Programmer: Peter Leng
+// Programmer: Peter Leng, Michael Lam
 // MIT Licence
 // =====================================================================
 
